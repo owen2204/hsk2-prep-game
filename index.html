@@ -1,357 +1,720 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HSK Vocabulary Dashboard</title>
-  
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSK 1-3 Dark Neon Quiz & Vocab Master</title>
+    <!-- นำเข้าฟอนต์ Prompt -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- เรียกใช้ไฟล์ข้อมูลคำศัพท์ -->
+    <script src="data.js"></script>
 
-    body {
-      font-family: 'Sukhumvit Set', 'Kanit', sans-serif;
-      background-color: #f8fafc;
-      color: #0f172a;
-      padding: 20px;
-    }
+    <style>
+        :root {
+            --bg-main: #0b0f19;
+            --bg-card: #151d30;
+            --bg-card-hover: #1e2942;
+            --accent-primary: #6366f1;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --success: #10b981;
+            --danger: #ef4444;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --border-color: #26334d;
+        }
 
-    /* แถบเครื่องมือด้านบน */
-    header {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      background: #ffffff;
-      padding: 16px 20px;
-      border-radius: 12px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-      margin-bottom: 20px;
-    }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Prompt', sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-main); min-height: 100vh; display: flex; justify-content: center; padding: 16px; }
+        .container { width: 100%; max-width: 850px; position: relative; }
 
-    .controls-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-    }
+        /* Header & Navigation Controls */
+        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 16px; margin-bottom: 20px; gap: 12px; flex-wrap: wrap; }
+        .logo { font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, #818cf8, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+        
+        .header-actions { display: flex; align-items: center; gap: 10px; }
 
-    .btn {
-      padding: 8px 16px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      background: #ffffff;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
+        .toggle-switch { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; cursor: pointer; color: var(--text-sub); background: var(--bg-card); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border-color); user-select: none; }
+        .toggle-switch input { display: none; }
+        .slider { width: 36px; height: 18px; background: #334155; border-radius: 20px; position: relative; transition: 0.3s; }
+        .slider::before { content: ""; position: absolute; width: 14px; height: 14px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: 0.3s; }
+        input:checked + .slider { background: var(--accent-primary); }
+        input:checked + .slider::before { transform: translateX(18px); }
 
-    .btn:hover {
-      background: #f1f5f9;
-    }
+        /* 🌐 สวิตช์ควบคุมพินอินทั่วทั้งแอป */
+        .pinyin { font-size: 0.85rem; color: #a5b4fc; line-height: 1.2; min-height: 1.2em; display: block; font-weight: 400; }
+        body.hide-pinyin .pinyin { display: none !important; }
 
-    .btn-toggle {
-      background: #eff6ff;
-      border-color: #3b82f6;
-      color: #1d4ed8;
-    }
+        .view { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-    .btn-hsk.active {
-      background: #2563eb;
-      color: #ffffff;
-      border-color: #2563eb;
-    }
+        /* Home View UI */
+        .hero-banner { background: linear-gradient(135deg, #312e81 0%, #4c1d95 50%, #831843 100%); border-radius: 20px; padding: 24px; margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .hero-banner h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 6px; }
+        .hero-banner p { color: #c7d2fe; font-size: 0.95rem; margin-bottom: 16px; }
+        .hero-btns { display: flex; gap: 10px; flex-wrap: wrap; }
 
-    .search-input {
-      padding: 8px 14px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      outline: none;
-      width: 200px;
-    }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
+        .stat-box { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 14px; text-align: center; }
+        .stat-box .icon { font-size: 1.5rem; margin-bottom: 4px; }
+        .stat-box .val { font-size: 1.2rem; font-weight: 700; color: var(--accent-cyan); }
+        .stat-box .lbl { font-size: 0.8rem; color: var(--text-sub); }
 
-    /* 📦 กล่องคำศัพท์มาตรฐาน (ใช้ร่วมกันทั้งแดชบอร์ดและเกมเรียงประโยค) */
-    .word-box {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 8px 12px;
-      background: #ffffff;
-      border: 2px solid #e2e8f0;
-      border-radius: 10px;
-      cursor: pointer;
-      user-select: none;
-      transition: transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-      min-width: 65px;
-    }
+        .section-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        .topic-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+        .topic-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 18px; padding: 20px; cursor: pointer; transition: all 0.25s ease; position: relative; }
+        .topic-card:hover { transform: translateY(-4px); background: var(--bg-card-hover); border-color: var(--accent-primary); box-shadow: 0 8px 25px rgba(99, 102, 241, 0.2); }
+        .topic-card .card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .badge { display: inline-block; padding: 4px 10px; background: rgba(99, 102, 241, 0.15); color: #a5b4fc; border-radius: 12px; font-size: 0.75rem; font-weight: 500; margin-top: 12px; border: 1px solid rgba(99, 102, 241, 0.3); }
 
-    .word-box:hover {
-      border-color: #3b82f6;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
-    }
+        /* 📦 กล่องคำศัพท์มาตรฐาน Dark Neon (ใช้กับคลังคำศัพท์ & เรียงประโยค) */
+        .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 12px; margin-top: 16px; }
+        .word-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 12px 8px; text-align: center; cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 75px; user-select: none; }
+        .word-card:hover { border-color: var(--accent-primary); background: var(--bg-card-hover); transform: translateY(-3px); box-shadow: 0 6px 18px rgba(99, 102, 241, 0.25); }
+        .word-card .chinese { font-size: 1.4rem; font-weight: 700; color: var(--text-main); margin-top: 2px; }
 
-    .word-box .pinyin {
-      font-size: 0.85rem;
-      color: #2563eb;
-      font-weight: 500;
-      height: 18px; /* ล็อกความสูงไว้ ไม่ให้กล่องขยับเวลาซ่อนพินอิน */
-      line-height: 18px;
-    }
+        /* Interactive Block (ใช้ในแบบทดสอบเรียงประโยค) */
+        .interactive-zone { margin: 15px 0; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; min-height: 65px; padding: 8px; border-radius: 12px; }
+        .word-block { background: var(--bg-card); border: 1.5px solid var(--border-color); color: var(--text-main); padding: 8px 14px; border-radius: 12px; cursor: pointer; transition: 0.2s; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; user-select: none; min-width: 55px; }
+        .word-block:hover { border-color: var(--accent-primary); background: var(--bg-card-hover); transform: translateY(-2px); }
+        .word-block .chinese { font-size: 1.2rem; font-weight: 600; }
 
-    .word-box .chinese {
-      font-size: 1.4rem;
-      font-weight: bold;
-      color: #0f172a;
-    }
+        /* Timer Option Grid */
+        .setting-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 20px; }
+        .time-option-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+        .time-opt-btn { background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 12px; border-radius: 12px; font-weight: 500; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .time-opt-btn.active { border-color: var(--accent-pink); background: rgba(236, 72, 153, 0.15); color: #f472b6; font-weight: 600; }
 
-    /* 🎯 สวิตช์ควบคุมพินอินทั้งแอป */
-    body.hide-pinyin .pinyin {
-      visibility: hidden;
-    }
+        /* Quiz UI Elements */
+        .dashboard-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+        .quiz-area { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 18px; padding: 24px; min-height: 380px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+        .question-box { text-align: center; margin: 15px 0; min-height: 80px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 1.6rem; font-weight: 600; }
+        
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
+        .opt-btn { background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 14px; border-radius: 12px; font-size: 0.95rem; cursor: pointer; text-align: center; transition: 0.2s; }
+        .opt-btn:hover { border-color: var(--accent-primary); background: rgba(99, 102, 241, 0.1); }
 
-    /* โซนการจัดวาง */
-    .section-title {
-      font-size: 1.15rem;
-      font-weight: 700;
-      margin: 20px 0 10px;
-      color: #334155;
-    }
+        .text-input { width: 100%; padding: 12px 16px; background: var(--bg-main); border: 1px solid var(--border-color); color: white; border-radius: 12px; font-size: 0.95rem; outline: none; transition: 0.2s; }
+        .text-input:focus { border-color: var(--accent-primary); }
 
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
-      gap: 10px;
-      background: #ffffff;
-      padding: 16px;
-      border-radius: 12px;
-      border: 1px solid #e2e8f0;
-      min-height: 150px;
-    }
+        .action-btn { background: linear-gradient(135deg, var(--accent-primary), #4f46e5); color: white; border: none; padding: 14px; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; margin-top: 15px; transition: 0.2s; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3); }
+        .action-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-sub { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px 16px; border-radius: 10px; font-weight: 500; cursor: pointer; transition: 0.2s; }
+        .btn-sub:hover { border-color: var(--accent-primary); background: var(--bg-card-hover); }
+        .btn-sub.active { background: var(--accent-primary); color: white; border-color: var(--accent-primary); }
 
-    .sentence-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      background: #ffffff;
-      padding: 16px;
-      border-radius: 12px;
-      border: 1px solid #e2e8f0;
-      min-height: 70px;
-      align-items: center;
-    }
+        .audio-btn { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border: 1px solid var(--accent-primary); width: 64px; height: 64px; border-radius: 50%; font-size: 1.8rem; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; transition: 0.2s; }
 
-    /* Modal แสดงรายละเอียดคำศัพท์ */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.5);
-      backdrop-filter: blur(2px);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
+        .level-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; margin-top: 16px; }
+        .level-node { background: var(--bg-card); border: 1px solid var(--border-color); padding: 16px; border-radius: 14px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .level-node.completed { border-color: var(--success); background: rgba(16, 185, 129, 0.1); }
 
-    .modal-content {
-      background: #ffffff;
-      padding: 24px;
-      border-radius: 16px;
-      max-width: 400px;
-      width: 90%;
-      position: relative;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-    }
+        /* Dashboard Feedback Pop-up Card Overlay */
+        .feedback-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 15, 25, 0.88); backdrop-filter: blur(6px); border-radius: 18px; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 24px; text-align: center; z-index: 20; animation: fadeIn 0.2s ease-out; }
+        .feedback-card { background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 20px; padding: 28px 20px; width: 100%; max-width: 420px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        .feedback-card.correct { border-color: var(--success); box-shadow: 0 0 25px rgba(16, 185, 129, 0.2); }
+        .feedback-card.wrong { border-color: var(--danger); box-shadow: 0 0 25px rgba(239, 68, 68, 0.2); }
+        .feedback-icon { font-size: 3.2rem; margin-bottom: 10px; }
+        .feedback-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; }
+        .feedback-detail { font-size: 0.95rem; color: var(--text-sub); margin-bottom: 20px; line-height: 1.5; }
 
-    .modal-close {
-      position: absolute;
-      top: 14px; right: 18px;
-      font-size: 1.4rem;
-      cursor: pointer;
-      color: #94a3b8;
-    }
-
-    .modal-zh { font-size: 2.5rem; font-weight: bold; text-align: center; color: #0f172a; }
-    .modal-py { font-size: 1.1rem; color: #2563eb; text-align: center; margin-bottom: 6px; }
-    .modal-th { font-size: 1.1rem; text-align: center; color: #475569; font-weight: 600; margin-bottom: 16px; }
-    .modal-example { background: #f8fafc; padding: 12px; border-radius: 8px; font-size: 0.95rem; border-left: 4px solid #3b82f6; }
-  </style>
+        /* Modals */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 50; }
+        .modal-content { background: var(--bg-card); border: 1px solid var(--border-color); padding: 28px; border-radius: 20px; width: 90%; max-width: 420px; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+        .modal-close { position: absolute; top: 14px; right: 18px; font-size: 1.5rem; cursor: pointer; color: var(--text-sub); transition: 0.2s; }
+        .modal-close:hover { color: var(--text-main); }
+    </style>
 </head>
 <body>
 
-  <!-- แถบด้านบน: สวิตช์พินอิน ตัวกรอง HSK และช่องค้นหา -->
-  <header>
-    <div class="controls-group">
-      <button class="btn btn-toggle" id="pinyin-btn" onclick="togglePinyin()">👁️ พินอิน: เปิด</button>
-      <button class="btn btn-hsk active" onclick="filterHSK('all', this)">ทั้งหมด</button>
-      <button class="btn btn-hsk" onclick="filterHSK(1, this)">HSK 1</button>
-      <button class="btn btn-hsk" onclick="filterHSK(2, this)">HSK 2</button>
-      <button class="btn btn-hsk" onclick="filterHSK(3, this)">HSK 3</button>
+<div class="container">
+    <header>
+        <div class="logo" onclick="navTo('homeView')">
+            <span>🏮 HSK Master</span>
+        </div>
+        <div class="header-actions">
+            <button class="btn-sub" onclick="navTo('vocabView')">📚 คลังคำศัพท์รวม</button>
+            <label class="toggle-switch">
+                <span>พินอิน</span>
+                <input type="checkbox" id="pinyinToggle" checked onchange="togglePinyin()">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </header>
+
+    <!-- 1. หน้าหลัก Dashboard -->
+    <div id="homeView" class="view active">
+        <div class="hero-banner">
+            <h1>เรียนรู้ & ทดสอบ HSK 1-3 🚀</h1>
+            <p id="currentProgressSummary">ระดับที่เลือก: HSK 1 | ผ่านแล้ว: 0 / 20 ด่าน</p>
+            <div class="hero-btns">
+                <button class="btn-sub" style="background: rgba(255,255,255,0.2); border: none; color: white;" onclick="navTo('progressView')">🗺️ แผนที่ด่านทั้งหมด</button>
+                <button class="btn-sub" style="background: var(--accent-primary); border: none; color: white;" onclick="navTo('vocabView')">📚 เปิดแดชบอร์ดคำศัพท์รวม</button>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box"><div class="icon">📚</div><div class="val" id="statTotalVocab">600</div><div class="lbl">คลังคำศัพท์รวม</div></div>
+            <div class="stat-box"><div class="icon">🏆</div><div class="val" id="statLevelsPassed">0 / 20</div><div class="lbl">ด่านที่ผ่านแล้ว</div></div>
+            <div class="stat-box"><div class="icon">⭐</div><div class="val" id="statTotalScore">0</div><div class="lbl">คะแนนสะสม</div></div>
+        </div>
+
+        <div class="section-title">🎯 เลือกเลเวล HSK ที่ต้องการทดสอบ</div>
+        <div class="topic-grid">
+            <div class="topic-card" onclick="selectTopic('hsk1')">
+                <div class="card-head"><h3>🟢 HSK 1</h3><span>🌱</span></div>
+                <p>ระดับเริ่มต้น คำศัพท์พื้นฐาน ประโยคสนทนาสั้นในชีวิตประจำวัน</p>
+                <span class="badge">150 คำศัพท์พื้นฐาน</span>
+            </div>
+            <div class="topic-card" onclick="selectTopic('hsk2')">
+                <div class="card-head"><h3>🔵 HSK 2</h3><span>🚀</span></div>
+                <p>ระดับกลาง สื่อสารประโยคความซ้อน และบริบทชีวิตประจำวัน</p>
+                <span class="badge">300 คำศัพท์สะสม</span>
+            </div>
+            <div class="topic-card" onclick="selectTopic('hsk3')">
+                <div class="card-head"><h3>🟣 HSK 3</h3><span>💎</span></div>
+                <p>ระดับสูง เข้าใจบริบทการทำงาน การแก้ไขปัญหา และการเล่าเรื่อง</p>
+                <span class="badge">600 คำศัพท์สมบูรณ์</span>
+            </div>
+            <div class="topic-card" onclick="selectTopic('mix')">
+                <div class="card-head"><h3>🌈 รวม HSK 1-3</h3><span>⚡</span></div>
+                <p>ทดสอบคละคำศัพท์และประโยคจาก HSK 1 ถึง HSK 3 ครบทุกรูปแบบ</p>
+                <span class="badge">คลังศัพท์สมบูรณ์</span>
+            </div>
+        </div>
     </div>
-    <input type="text" id="search-input" class="search-input" placeholder="🔍 ค้นหาคำศัพท์..." oninput="handleSearch()">
-  </header>
 
-  <!-- 1. แดชบอร์ดคำศัพท์รวม -->
-  <div class="section-title">📚 แดชบอร์ดคำศัพท์ (คลิกที่กล่องเพื่อดูรายละเอียด)</div>
-  <div id="vocab-dashboard" class="dashboard-grid"></div>
+    <!-- 2. หน้าแดชบอร์ดคำศัพท์รวม (Vocab Dashboard View) -->
+    <div id="vocabView" class="view">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:10px; flex-wrap:wrap;">
+            <button class="btn-sub" onclick="navTo('homeView')">← กลับหน้าหลัก</button>
+            <input type="text" id="vocabSearch" class="text-input" style="max-width:280px;" placeholder="🔍 ค้นหาคำศัพท์ / พินอิน / Thai..." oninput="filterVocab()">
+        </div>
 
-  <!-- 2. โซนกล่องคำศัพท์เรียงประโยค -->
-  <div class="section-title">🧩 ตัวอย่างกล่องคำศัพท์สำหรับเรียงประโยค</div>
-  <div id="sentence-builder" class="sentence-container"></div>
+        <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
+            <button class="btn-sub btn-filter active" onclick="setVocabFilter('all', this)">ทั้งหมด</button>
+            <button class="btn-sub btn-filter" onclick="setVocabFilter(1, this)">HSK 1</button>
+            <button class="btn-sub btn-filter" onclick="setVocabFilter(2, this)">HSK 2</button>
+            <button class="btn-sub btn-filter" onclick="setVocabFilter(3, this)">HSK 3</button>
+        </div>
 
-  <!-- ป๊อปอัปรายละเอียดคำศัพท์ -->
-  <div id="word-modal" class="modal" onclick="closeModal(event)">
-    <div class="modal-content">
-      <span class="modal-close" onclick="closeModalDirect()">&times;</span>
-      <div id="modal-zh" class="modal-zh"></div>
-      <div id="modal-py" class="modal-py pinyin"></div>
-      <div id="modal-th" class="modal-th"></div>
-      <div class="modal-example">
-        <strong>ประโยคตัวอย่าง:</strong>
-        <div id="modal-sent-zh" style="margin-top:4px;"></div>
-        <div id="modal-sent-py" class="pinyin" style="color:#2563eb;"></div>
-        <div id="modal-sent-th" style="color:#64748b; font-size:0.85rem;"></div>
-      </div>
+        <div class="section-title">📚 คลังคำศัพท์รวม (กดที่กล่องเพื่อดูรายละเอียดเต็ม)</div>
+        <div class="vocab-grid" id="vocabGridArea"></div>
     </div>
-  </div>
 
-  <!-- ดึงไฟล์ข้อมูลคำศัพท์ -->
-  <script src="data.js"></script>
+    <!-- 3. หน้าเลือกโหมดและตั้งค่าเวลา -->
+    <div id="modeSelectView" class="view">
+        <button class="btn-sub" style="margin-bottom: 16px;" onclick="navTo('homeView')">← กลับหน้าหลัก</button>
+        <div class="section-title" id="selectedTopicTitle">ตั้งค่าแบบทดสอบ</div>
 
-  <script>
-    let isPinyinShow = true;
-    let currentHSKFilter = 'all';
-    let allWords = [];
+        <div class="setting-card">
+            <div style="font-weight: 600; font-size: 0.95rem;">⏱️ เลือกรูปแบบเวลาการทดสอบ</div>
+            <div class="time-option-grid">
+                <div class="time-opt-btn active" id="timeOptTimed" onclick="setTimeMode(true)">
+                    <span>⏱️ จับเวลา (30วิ/ข้อ)</span>
+                </div>
+                <div class="time-opt-btn" id="timeOptUntimed" onclick="setTimeMode(false)">
+                    <span>♾️ ไม่จับเวลา (ชิลๆ)</span>
+                </div>
+            </div>
+        </div>
 
-    // เริ่มต้นโหลดข้อมูล
-    window.onload = () => {
-      // ดึงข้อมูลจาก data.js (ถ้าไม่มีจะใช้ข้อมูลสำรอง)
-      allWords = (typeof words !== 'undefined') ? words : [
-        { id: 1, hsk: 1, chinese: "爱", pinyin: "ài", thai: "รัก", sentence_zh: "我爱你。", sentence_py: "wǒ ài nǐ.", sentence_th: "ฉันรักคุณ" },
-        { id: 451, hsk: 3, chinese: "难过", pinyin: "nánguò", thai: "เสียใจ", sentence_zh: "听到这个消息我很难过。", sentence_py: "tīngdào zhè gè xiāoxi wǒ hěn nánguò.", sentence_th: "ได้ยินข่าวนี้แล้วฉันเสียใจมาก" },
-        { id: 455, hsk: 3, chinese: "努力", pinyin: "nǔlì", thai: "ขยัน", sentence_zh: "努力学习。", sentence_py: "nǔlì xuéxí.", sentence_th: "ขยันเรียนหนังสือ" }
-      ];
+        <div class="section-title">🎮 เลือกโหมดควิชที่ต้องการเล่น</div>
+        <div class="topic-grid">
+            <div class="topic-card" onclick="startQuizMode(1)">
+                <h3>🧩 1. เรียงคำให้ถูกต้อง</h3>
+                <p>เรียงบล็อกอักษรจีนให้ตรงตามลำดับประโยคที่ถูกต้อง (พร้อมพินอินกำกับ)</p>
+            </div>
+            <div class="topic-card" onclick="startQuizMode(2)">
+                <h3>🏷️ 2. จับคู่คำแปลภาษาไทย</h3>
+                <p>จับคู่อักษรจีนกับตัวเลือกความหมายภาษาไทย</p>
+            </div>
+            <div class="topic-card" onclick="startQuizMode(3)">
+                <h3>✍️ 3. เติมคำในประโยค</h3>
+                <p>อ่านประโยคจีนแล้วพิมพ์คำแปลภาษาไทยในช่องว่าง</p>
+            </div>
+            <div class="topic-card" onclick="startQuizMode(4)">
+                <h3>🎧 4. ฟังเสียงและตอบ</h3>
+                <p>กดฟังเสียงพูดภาษาจีน แล้วเลือกความหมายที่ถูกต้อง</p>
+            </div>
+            <div class="topic-card" onclick="startQuizMode(5)">
+                <h3>🎲 5. สุ่มโหมดผสม</h3>
+                <p>ท้าทายความสามารถด้วยการสุ่มคำถามจากทุกโหมด</p>
+            </div>
+        </div>
+    </div>
 
-      renderDashboard(allWords);
-      renderSentenceGame();
-    };
+    <!-- 4. หน้าความก้าวหน้าด่าน -->
+    <div id="progressView" class="view">
+        <button class="btn-sub" style="margin-bottom:16px;" onclick="navTo('homeView')">← กลับหน้าหลัก</button>
+        <div class="section-title">🗺️ แผนที่ด่านทั้งหมด (20 ด่าน)</div>
+        <p style="color: var(--text-sub); font-size: 0.9rem;">กดเลือกด่านที่ต้องการเพื่อเข้าทดสอบทันที</p>
+        <div class="level-grid" id="levelGridArea"></div>
+    </div>
 
-    // 1. ฟังก์ชันสลับ เปิด/ปิด พินอินทั่วทั้งหน้าเว็บ
-    function togglePinyin() {
-      isPinyinShow = !isPinyinShow;
-      document.body.classList.toggle('hide-pinyin', !isPinyinShow);
-      
-      const btn = document.getElementById('pinyin-btn');
-      btn.innerText = isPinyinShow ? '👁️ พินอิน: เปิด' : '🙈 พินอิน: ปิด';
-    }
+    <!-- 5. หน้าทำควิช -->
+    <div id="quizView" class="view">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <button class="btn-sub" onclick="navTo('modeSelectView')">← ออก</button>
+            <span id="quizTopicTag" style="color:var(--accent-pink); font-weight:600; font-size:0.95rem;"></span>
+        </div>
 
-    // 2. ฟังก์ชันสร้าง Element กล่องคำศัพท์มาตรฐาน
-    function createWordBox(wordObj, onClickHandler) {
-      const box = document.createElement('div');
-      box.className = 'word-box';
-      box.innerHTML = `
-        <span class="pinyin">${wordObj.pinyin || ''}</span>
-        <span class="chinese">${wordObj.chinese}</span>
-      `;
-      if (onClickHandler) box.onclick = () => onClickHandler(wordObj);
-      return box;
-    }
+        <div class="dashboard-bar">
+            <div class="stat-box"><div class="val" id="levelDisplay">1/20</div><div class="lbl">ด่าน</div></div>
+            <div class="stat-box"><div class="val" id="progressDisplay">1/10</div><div class="lbl">ข้อที่</div></div>
+            <div class="stat-box"><div class="val" id="scoreDisplay">0</div><div class="lbl">คะแนน</div></div>
+            <div class="stat-box"><div class="val" id="timerDisplay">30s</div><div class="lbl">เวลา</div></div>
+        </div>
 
-    // 3. แสดงผลคำศัพท์บนแดชบอร์ด
-    function renderDashboard(list) {
-      const container = document.getElementById('vocab-dashboard');
-      container.innerHTML = '';
+        <div class="quiz-area" id="quizArea">
+            <div class="question-box" id="questionBox"></div>
+            <div id="interactiveArea"></div>
+            <button class="action-btn" id="submitBtn" onclick="checkAnswer()">ตรวจคำตอบ ✨</button>
 
-      if (list.length === 0) {
-        container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #94a3b8;">ไม่พบคำศัพท์</div>';
+            <!-- Dashboard Pop-up Card (Overlay) -->
+            <div class="feedback-overlay" id="feedbackOverlay">
+                <div class="feedback-card" id="feedbackCard">
+                    <div class="feedback-icon" id="feedbackIcon">🎉</div>
+                    <div class="feedback-title" id="feedbackTitle">ถูกต้องเก่งมาก!</div>
+                    <div class="feedback-detail" id="feedbackDetail"></div>
+                    <button class="action-btn" onclick="nextQuestion()">ไปข้อถัดไป ➔</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal รายละเอียดคำศัพท์ -->
+<div class="modal" id="vocabModal" onclick="closeVocabModal(event)">
+    <div class="modal-content" style="text-align:center;">
+        <span class="modal-close" onclick="closeVocabModalDirect()">&times;</span>
+        <span class="pinyin" id="modalPinyin" style="font-size:1.1rem; color:var(--accent-cyan); margin-bottom:4px;"></span>
+        <div id="modalChinese" style="font-size:2.8rem; font-weight:700; color:var(--text-main); margin-bottom:4px;"></div>
+        <div id="modalThai" style="font-size:1.15rem; color:var(--accent-pink); font-weight:600; margin-bottom:16px;"></div>
+        
+        <div style="background:var(--bg-main); border:1px solid var(--border-color); padding:16px; border-radius:14px; text-align:left;">
+            <div style="font-size:0.85rem; color:var(--text-sub); margin-bottom:6px; font-weight:500;">ประโยคตัวอย่าง:</div>
+            <span class="pinyin" id="modalSentPinyin" style="font-size:0.95rem; color:#a5b4fc; margin-bottom:2px;"></span>
+            <div id="modalSentChinese" style="font-size:1.25rem; font-weight:600; color:var(--text-main); margin-bottom:4px;"></div>
+            <div id="modalSentThai" style="font-size:0.9rem; color:var(--text-sub);"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal จบด่าน -->
+<div class="modal" id="resultModal">
+    <div class="modal-content" style="text-align:center;">
+        <div style="font-size: 3rem; margin-bottom: 8px;">🏆</div>
+        <h2>จบด่านที่ <span id="completedLevel">1</span></h2>
+        <p style="margin: 16px 0; color: var(--text-sub);">คะแนนที่คุณทำได้: <strong id="finalScore" style="color: var(--success); font-size: 1.5rem;">0</strong> / 10</p>
+        <button class="action-btn" onclick="nextLevel()">เล่นด่านถัดไป 🚀</button>
+        <button class="action-btn" style="background: var(--bg-main); border: 1px solid var(--border-color); margin-top: 8px;" onclick="navTo('homeView')">กลับหน้าหลัก 🏠</button>
+    </div>
+</div>
+
+<script>
+let activeTopic = 'hsk1';
+let isTimedMode = true;
+let currentMode = 1;
+let currentLevel = 1;
+let currentQuestionIdx = 0;
+let score = 0;
+let activeQuestionMode = 1;
+let levelQuestions = [];
+let userSelection = [];
+let timer = null;
+let currentVocabFilter = 'all';
+let userProgress = JSON.parse(localStorage.getItem('hsk_dark_progress')) || {};
+
+// ข้อมูลสำรองหากไม่มี data.js
+const defaultVocabList = [
+    { id: 1, hsk: 1, chinese: "爱", pinyin: "ài", thai: "รัก", sentence_zh: "我爱你。", sentence_py: "wǒ ài nǐ.", sentence_th: "ฉันรักคุณ", missing: "รัก" },
+    { id: 2, hsk: 1, chinese: "八", pinyin: "bā", thai: "แปด", sentence_zh: "我有八本书。", sentence_py: "wǒ yǒu bā běn shū.", sentence_th: "ฉันมีหนังสือแปดเล่ม", missing: "แปด" },
+    { id: 451, hsk: 3, chinese: "难过", pinyin: "nánguò", thai: "เสียใจ", sentence_zh: "听到这个消息我很难过。", sentence_py: "tīngdào zhè gè xiāoxi wǒ hěn nánguò.", sentence_th: "ได้ยินข่าวนี้แล้วฉันเสียใจมาก", missing: "เสียใจ" },
+    { id: 455, hsk: 3, chinese: "努力", pinyin: "nǔlì", thai: "ขยัน", sentence_zh: "他学习很努力。", sentence_py: "tā xuéxí hěn nǔlì.", sentence_th: "เขาเรียนขยันมาก", missing: "ขยัน" }
+];
+
+function getVocabData() {
+    if (typeof hskDatabase !== 'undefined' && Array.isArray(hskDatabase)) return hskDatabase;
+    if (typeof words !== 'undefined' && Array.isArray(words)) return words;
+    return defaultVocabList;
+}
+
+function navTo(viewId) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(viewId).classList.add('active');
+    document.getElementById('resultModal').style.display = 'none';
+    document.getElementById('feedbackOverlay').style.display = 'none';
+    
+    if(viewId === 'progressView') renderProgressGrid();
+    if(viewId === 'homeView') updateHomeDashboard();
+    if(viewId === 'vocabView') renderVocabDashboard();
+}
+
+function updateHomeDashboard() {
+    const allData = getVocabData();
+    const passedCount = Object.keys(userProgress).length;
+    let totalScore = 0;
+    Object.values(userProgress).forEach(val => totalScore += val);
+    
+    document.getElementById('statTotalVocab').innerText = allData.length;
+    document.getElementById('statLevelsPassed').innerText = `${passedCount} / 20`;
+    document.getElementById('statTotalScore').innerText = `${totalScore} คะแนน`;
+    document.getElementById('currentProgressSummary').innerText = `หัวข้อปัจจุบัน: ${activeTopic.toUpperCase()} | ผ่านแล้ว: ${passedCount} / 20 ด่าน`;
+}
+
+/* 🌐 ระบบปิด/เปิดพินอินทั้งหน้าเว็บ */
+function togglePinyin() {
+    const isChecked = document.getElementById('pinyinToggle').checked;
+    document.body.classList.toggle('hide-pinyin', !isChecked);
+}
+
+/* 📚 ระบบคลังคำศัพท์ (Vocab Dashboard) */
+function renderVocabDashboard() {
+    filterVocab();
+}
+
+function setVocabFilter(level, btn) {
+    currentVocabFilter = level;
+    document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filterVocab();
+}
+
+function filterVocab() {
+    const query = document.getElementById('vocabSearch').value.toLowerCase().trim();
+    const allData = getVocabData();
+    
+    const filtered = allData.filter(item => {
+        const matchLevel = (currentVocabFilter === 'all') || (item.hsk === currentVocabFilter);
+        const matchSearch = !query || 
+            item.chinese.includes(query) || 
+            (item.pinyin && item.pinyin.toLowerCase().includes(query)) || 
+            (item.thai && item.thai.includes(query));
+        return matchLevel && matchSearch;
+    });
+
+    const grid = document.getElementById('vocabGridArea');
+    grid.innerHTML = '';
+
+    if(filtered.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:var(--text-sub); padding:30px;">ไม่พบคำศัพท์ที่ค้นหา</div>';
         return;
-      }
-
-      list.forEach(item => {
-        const box = createWordBox(item, openModal);
-        container.appendChild(box);
-      });
     }
 
-    // 4. แสดงผลโซนเรียงประโยค
-    function renderSentenceGame() {
-      const container = document.getElementById('sentence-builder');
-      container.innerHTML = '';
+    filtered.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'word-card';
+        card.innerHTML = `
+            <span class="pinyin">${item.pinyin || ''}</span>
+            <span class="chinese">${item.chinese}</span>
+        `;
+        card.onclick = () => openVocabModal(item);
+        grid.appendChild(card);
+    });
+}
 
-      const sampleSentence = [
-        { chinese: "我", pinyin: "wǒ" },
-        { chinese: "听了", pinyin: "tīng le" },
-        { chinese: "感到", pinyin: "gǎndào" },
-        { chinese: "很难过", pinyin: "hěn nánguò" }
-      ];
+function openVocabModal(item) {
+    document.getElementById('modalPinyin').innerText = item.pinyin || '';
+    document.getElementById('modalChinese').innerText = item.chinese;
+    document.getElementById('modalThai').innerText = item.thai || '';
+    
+    document.getElementById('modalSentPinyin').innerText = item.sentence_py || '';
+    document.getElementById('modalSentChinese').innerText = item.sentence_zh || '-';
+    document.getElementById('modalSentThai').innerText = item.sentence_th || '';
 
-      sampleSentence.forEach(item => {
-        const box = createWordBox(item, (selected) => {
-          console.log("เลือกคำเรียงประโยค:", selected.chinese);
+    document.getElementById('vocabModal').style.display = 'flex';
+}
+
+function closeVocabModal(e) {
+    if(e.target.id === 'vocabModal') document.getElementById('vocabModal').style.display = 'none';
+}
+function closeVocabModalDirect() {
+    document.getElementById('vocabModal').style.display = 'none';
+}
+
+function selectTopic(topicKey) {
+    activeTopic = topicKey;
+    const titleMap = { 'hsk1': '🟢 HSK Level 1', 'hsk2': '🔵 HSK Level 2', 'hsk3': '🟣 HSK Level 3', 'mix': '🌈 รวม HSK 1-3' };
+    document.getElementById('selectedTopicTitle').innerText = titleMap[topicKey];
+    navTo('modeSelectView');
+}
+
+function setTimeMode(timed) {
+    isTimedMode = timed;
+    document.getElementById('timeOptTimed').classList.toggle('active', timed);
+    document.getElementById('timeOptUntimed').classList.toggle('active', !timed);
+}
+
+function renderProgressGrid() {
+    const grid = document.getElementById('levelGridArea');
+    grid.innerHTML = '';
+    for(let i = 1; i <= 20; i++) {
+        const isDone = userProgress[i] !== undefined;
+        const node = document.createElement('div');
+        node.className = `level-node ${isDone ? 'completed' : ''}`;
+        node.innerHTML = `<div class="num">ด่าน ${i}</div><div class="status" style="font-size:0.75rem; margin-top:4px; color:var(--text-sub);">${isDone ? '✨ ผ่าน ('+userProgress[i]+'/10)' : '🔒 ยังไม่เริ่ม'}</div>`;
+        node.onclick = () => {
+            currentLevel = i;
+            startQuizMode(1);
+        };
+        grid.appendChild(node);
+    }
+}
+
+function startQuizMode(mode) {
+    currentMode = mode;
+    currentQuestionIdx = 0;
+    score = 0;
+    document.getElementById('quizTopicTag').innerText = `${activeTopic.toUpperCase()} | ${isTimedMode ? '⏱️ จับเวลา' : '♾️ ฟรีสไตล์'}`;
+    loadLevelQuestions();
+    navTo('quizView');
+    renderQuestion();
+}
+
+function loadLevelQuestions() {
+    const allData = getVocabData();
+    let filtered = [...allData];
+    if(activeTopic === 'hsk1') filtered = filtered.filter(d => d.hsk === 1);
+    else if(activeTopic === 'hsk2') filtered = filtered.filter(d => d.hsk === 2);
+    else if(activeTopic === 'hsk3') filtered = filtered.filter(d => d.hsk === 3);
+    
+    if(filtered.length === 0) filtered = [...allData];
+    
+    levelQuestions = [...filtered].sort(() => 0.5 - Math.random()).slice(0, 10);
+    while(levelQuestions.length < 10 && filtered.length > 0) {
+        levelQuestions.push(filtered[Math.floor(Math.random() * filtered.length)]);
+    }
+}
+
+// แตกประโยคออกเป็นบล็อกพร้อมพินอินกำกับทุกตัว
+function buildSentenceUnits(sentenceZh, sentencePy) {
+    const chars = sentenceZh.replace(/[.,?!。，？！]/g, '').split('');
+    const pyWords = sentencePy ? sentencePy.replace(/[.,?!。，？！]/g, '').split(' ') : [];
+
+    return chars.map((char, idx) => ({
+        chinese: char,
+        pinyin: pyWords[idx] || ''
+    }));
+}
+
+function renderQuestion() {
+    clearInterval(timer);
+    document.getElementById('feedbackOverlay').style.display = 'none';
+    userSelection = [];
+    
+    const q = levelQuestions[currentQuestionIdx];
+    const qBox = document.getElementById('questionBox');
+    const interactive = document.getElementById('interactiveArea');
+    
+    activeQuestionMode = currentMode === 5 ? Math.floor(Math.random() * 4) + 1 : currentMode;
+
+    document.getElementById('levelDisplay').innerText = `${currentLevel}/20`;
+    document.getElementById('progressDisplay').innerText = `${currentQuestionIdx + 1}/10`;
+    document.getElementById('scoreDisplay').innerText = score;
+    
+    qBox.innerHTML = '';
+    interactive.innerHTML = '';
+    startTimer();
+
+    if (activeQuestionMode === 1) {
+        // โหมดเรียงคำศัพท์ (มีพินอินกำกับบนบล็อกทุกตัว)
+        qBox.innerHTML = `<span class="pinyin">${q.pinyin || ''}</span><div>${q.chinese}</div>`;
+        
+        const units = buildSentenceUnits(q.sentence_zh, q.sentence_py || '');
+        const shuffled = [...units].sort(() => 0.5 - Math.random());
+        
+        const targetZone = document.createElement('div');
+        targetZone.id = "targetBlocks";
+        targetZone.className = "interactive-zone";
+        targetZone.style.borderBottom = "2px dashed var(--border-color)";
+
+        const sourceZone = document.createElement('div');
+        sourceZone.className = "interactive-zone";
+
+        shuffled.forEach(unit => {
+            const block = document.createElement('div');
+            block.className = "word-block";
+            block.innerHTML = `
+                <span class="pinyin">${unit.pinyin}</span>
+                <span class="chinese">${unit.chinese}</span>
+            `;
+            block.onclick = () => {
+                if (block.parentElement === sourceZone) targetZone.appendChild(block);
+                else sourceZone.appendChild(block);
+            };
+            sourceZone.appendChild(block);
         });
-        container.appendChild(box);
-      });
+
+        interactive.appendChild(targetZone);
+        interactive.appendChild(sourceZone);
+
+    } else if (activeQuestionMode === 2) {
+        qBox.innerHTML = `<span class="pinyin">${q.pinyin || ''}</span><div>${q.chinese}</div>`;
+        const grid = document.createElement('div');
+        grid.className = "options-grid";
+        
+        getRandomOptions(q.thai, 'thai').forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = "opt-btn";
+            btn.innerText = opt;
+            btn.onclick = () => {
+                document.querySelectorAll('.opt-btn').forEach(b => b.style.borderColor = 'var(--border-color)');
+                btn.style.borderColor = 'var(--accent-primary)';
+                userSelection = [opt];
+            };
+            grid.appendChild(btn);
+        });
+        interactive.appendChild(grid);
+
+    } else if (activeQuestionMode === 3) {
+        const masked = q.sentence_th ? q.sentence_th.replace(q.missing, "______") : "______";
+        qBox.innerHTML = `
+            <span class="pinyin">${q.sentence_py || ''}</span>
+            <div>${q.sentence_zh || ''}</div>
+            <div style="font-size:0.95rem; color:var(--text-sub); margin-top:8px;">${masked}</div>
+        `;
+        
+        const input = document.createElement('input');
+        input.type = "text";
+        input.className = "text-input";
+        input.placeholder = "พิมพ์คำแปลภาษาไทยที่เว้นว่างไว้...";
+        input.id = "textAnswer";
+        interactive.appendChild(input);
+
+    } else if (activeQuestionMode === 4) {
+        qBox.innerHTML = `<button class="audio-btn" onclick="playAudio('${q.chinese}')">🔊</button><div style="font-size:1rem;">กดฟังเสียงภาษาจีน</div>`;
+        playAudio(q.chinese);
+
+        const grid = document.createElement('div');
+        grid.className = "options-grid";
+        
+        getRandomOptions(q.thai, 'thai').forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = "opt-btn";
+            btn.innerText = opt;
+            btn.onclick = () => {
+                document.querySelectorAll('.opt-btn').forEach(b => b.style.borderColor = 'var(--border-color)');
+                btn.style.borderColor = 'var(--accent-primary)';
+                userSelection = [opt];
+            };
+            grid.appendChild(btn);
+        });
+        interactive.appendChild(grid);
+    }
+}
+
+function playAudio(text) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'zh-CN';
+    utterance.rate = 0.8;
+    window.speechSynthesis.speak(utterance);
+}
+
+function getRandomOptions(correctAnswer, key) {
+    const allData = getVocabData();
+    const opts = [correctAnswer];
+    while (opts.length < 4 && allData.length > 0) {
+        const randomItem = allData[Math.floor(Math.random() * allData.length)][key];
+        if (randomItem && !opts.includes(randomItem)) opts.push(randomItem);
+    }
+    return opts.sort(() => 0.5 - Math.random());
+}
+
+function startTimer() {
+    if(!isTimedMode) {
+        document.getElementById('timerDisplay').innerText = `♾️`;
+        return;
+    }
+    let timeLeft = 30;
+    document.getElementById('timerDisplay').innerText = `${timeLeft}s`;
+    timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timerDisplay').innerText = `${timeLeft}s`;
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            checkAnswer(true);
+        }
+    }, 1000);
+}
+
+function checkAnswer(timeout = false) {
+    clearInterval(timer);
+    const q = levelQuestions[currentQuestionIdx];
+    let isCorrect = false;
+
+    if (!timeout) {
+        if (activeQuestionMode === 1) {
+            const targetBlocks = document.getElementById('targetBlocks');
+            const constructed = Array.from(targetBlocks.children)
+                .map(el => el.querySelector('.chinese').innerText)
+                .join('');
+            const targetClean = q.sentence_zh.replace(/[.,?!。，？！]/g, '');
+            isCorrect = (constructed === targetClean);
+        } else if (activeQuestionMode === 2 || activeQuestionMode === 4) {
+            isCorrect = (userSelection[0] === q.thai);
+        } else if (activeQuestionMode === 3) {
+            const val = document.getElementById('textAnswer').value.trim();
+            isCorrect = (val === q.missing);
+        }
     }
 
-    // 5. ระบบกรองระดับ HSK
-    function filterHSK(level, btnElement) {
-      currentHSKFilter = level;
-      document.querySelectorAll('.btn-hsk').forEach(b => b.classList.remove('active'));
-      btnElement.classList.add('active');
-      applyFilters();
+    const card = document.getElementById('feedbackCard');
+    const icon = document.getElementById('feedbackIcon');
+    const title = document.getElementById('feedbackTitle');
+    const detail = document.getElementById('feedbackDetail');
+
+    if (isCorrect) {
+        score++;
+        card.className = "feedback-card correct";
+        icon.innerText = "🎉";
+        title.innerText = "ถูกต้องเก่งมาก!";
+        title.style.color = "var(--success)";
+        detail.innerText = "บวกเพิ่ม +1 คะแนน ยอดเยี่ยมมากทำต่อไปนะ!";
+    } else {
+        card.className = "feedback-card wrong";
+        icon.innerText = timeout ? "⏰" : "❌";
+        title.innerText = timeout ? "หมดเวลาแล้ว!" : "ยังไม่ถูกต้อง!";
+        title.style.color = "var(--danger)";
+        const correctText = activeQuestionMode === 1 ? q.sentence_zh : (activeQuestionMode === 3 ? q.missing : q.thai);
+        detail.innerHTML = `เฉลยคำตอบที่ถูกต้องคือ:<br><strong style="color:var(--text-main); font-size:1.1rem;">${correctText}</strong>`;
     }
 
-    // 6. ระบบค้นหาคำศัพท์
-    function handleSearch() {
-      applyFilters();
+    document.getElementById('scoreDisplay').innerText = score;
+    document.getElementById('feedbackOverlay').style.display = 'flex';
+}
+
+function nextQuestion() {
+    currentQuestionIdx++;
+    if (currentQuestionIdx < 10) {
+        renderQuestion();
+    } else {
+        showLevelResult();
     }
+}
 
-    function applyFilters() {
-      const query = document.getElementById('search-input').value.toLowerCase().trim();
-      
-      const filtered = allWords.filter(item => {
-        const matchHSK = (currentHSKFilter === 'all') || (item.hsk === currentHSKFilter);
-        const matchQuery = !query || 
-          item.chinese.includes(query) || 
-          (item.pinyin && item.pinyin.toLowerCase().includes(query)) || 
-          (item.thai && item.thai.includes(query));
+function showLevelResult() {
+    userProgress[currentLevel] = Math.max(userProgress[currentLevel] || 0, score);
+    localStorage.setItem('hsk_dark_progress', JSON.stringify(userProgress));
 
-        return matchHSK && matchQuery;
-      });
+    document.getElementById('completedLevel').innerText = currentLevel;
+    document.getElementById('finalScore').innerText = score;
+    document.getElementById('resultModal').style.display = 'flex';
+}
 
-      renderDashboard(filtered);
-    }
+function nextLevel() {
+    if(currentLevel < 20) currentLevel++;
+    document.getElementById('resultModal').style.display = 'none';
+    startQuizMode(currentMode);
+}
 
-    // 7. ระบบ ป๊อปอัป (Modal) แสดงรายละเอียด
-    function openModal(item) {
-      document.getElementById('modal-zh').innerText = item.chinese;
-      document.getElementById('modal-py').innerText = item.pinyin || '';
-      document.getElementById('modal-th').innerText = item.thai || '';
-      
-      document.getElementById('modal-sent-zh').innerText = item.sentence_zh || '-';
-      document.getElementById('modal-sent-py').innerText = item.sentence_py || '';
-      document.getElementById('modal-sent-th').innerText = item.sentence_th || '';
-
-      document.getElementById('word-modal').style.display = 'flex';
-    }
-
-    function closeModal(event) {
-      if (event.target.id === 'word-modal') {
-        document.getElementById('word-modal').style.display = 'none';
-      }
-    }
-
-    function closeModalDirect() {
-      document.getElementById('word-modal').style.display = 'none';
-    }
-  </script>
-
+window.onload = () => {
+    updateHomeDashboard();
+};
+</script>
 </body>
 </html>
