@@ -269,7 +269,7 @@ const hskDatabase = [
     { id: 304, hsk: 3, chinese: "爱好", pinyin: "àihào", thai: "งานอดิเรก", sentence_zh: "我的爱好是看书。", sentence_py: "wǒ de àihào shì kàn shū.", sentence_th: "งานอดิเรกของฉันคือการอ่านหนังสือ", missing: "งานอดิเรก" },
     { id: 305, hsk: 3, chinese: "安静", pinyin: "ānjìng", thai: "เงียบสงบ", sentence_zh: "请保持安静。", sentence_py: "qǐng bǎochí ānjìng.", sentence_th: "โปรดรักษาความเงียบสงบ", missing: "เงียบสงบ" },
     { id: 306, hsk: 3, chinese: "把", pinyin: "bǎ", thai: "เอา/นำ", sentence_zh: "把门打开。", sentence_py: "bǎ mén dǎkāi.", sentence_th: "เอาประตูเปิดออก (เปิดประตู)", missing: "เอา" },
-    { id: 307, hsk: 3, chinese: "搬", pinyin: "bān", thai: "ย้าย", sentence_zh: "เราย้ายบ้าน了。", sentence_py: "wǒmen bān jiā le.", sentence_th: "พวกเราย้ายบ้านแล้ว", missing: "ย้าย" },
+    { id: 307, hsk: 3, chinese: "搬", pinyin: "bān", thai: "ย้าย", sentence_zh: "我们搬家了。", sentence_py: "wǒmen bān jiā le.", sentence_th: "พวกเราย้ายบ้านแล้ว", missing: "ย้าย" },
     { id: 308, hsk: 3, chinese: "班", pinyin: "bān", thai: "ชั้นเรียน/กะ", sentence_zh: "我们在同一个班。", sentence_py: "wǒmen zài tóng yí gè bān.", sentence_th: "พวกเราอยู่ในชั้นเรียนเดียวกัน", missing: "ชั้นเรียน" },
     { id: 309, hsk: 3, chinese: "办法", pinyin: "bànfǎ", thai: "วิธี", sentence_zh: "我没有办法。", sentence_py: "wǒ méi yǒu bànfǎ.", sentence_th: "ฉันไม่มีวิธี", missing: "วิธี" },
     { id: 310, hsk: 3, chinese: "办公室", pinyin: "bàngōngshì", thai: "สำนักงาน", sentence_zh: "他在办公室工作。", sentence_py: "tā zài bàngōngshì gōngzuò.", sentence_th: "เขาทำงานที่สำนักงาน", missing: "สำนักงาน" },
