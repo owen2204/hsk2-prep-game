@@ -566,3 +566,4 @@ const hskDatabase = [
     { id: 600, hsk: 3, chinese: "结束", pinyin: "jiéshù", thai: "เสร็จสิ้นลง", sentence_zh: "课程结束了。", sentence_py: "kèchéng jiéshù le.", sentence_th: "หลักสูตรเสร็จสิ้นลงแล้ว", missing: "เสร็จสิ้นลง" }
 
 ];
+console.log("จำนวนคำศัพท์ทั้งหมด:", hskDatabase.length);
