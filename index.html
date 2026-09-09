@@ -45,7 +45,7 @@
         input:checked + .slider::before { transform: translateX(18px); }
 
         /* 🌐 สวิตช์ควบคุมพินอินทั่วทั้งแอป */
-        .pinyin { font-size: 0.85rem; color: #a5b4fc; line-height: 1.2; min-height: 1.2em; display: block; font-weight: 400; }
+        .pinyin { font-size: 0.85rem; color: #a5b4fc; line-height: 1.2; min-height: 1.2em; display: block; font-weight: 400; text-align: center; }
         body.hide-pinyin .pinyin { display: none !important; }
 
         .view { display: none; animation: fadeIn 0.3s ease-in-out; }
@@ -78,10 +78,10 @@
         .word-card .chinese { font-size: 1.4rem; font-weight: 700; color: var(--text-main); margin-top: 2px; }
 
         /* Interactive Block (ใช้ในแบบทดสอบเรียงประโยค) */
-        .interactive-zone { margin: 15px 0; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; min-height: 65px; padding: 8px; border-radius: 12px; }
+        .interactive-zone { margin: 15px 0; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; min-height: 70px; padding: 8px; border-radius: 12px; }
         .word-block { background: var(--bg-card); border: 1.5px solid var(--border-color); color: var(--text-main); padding: 8px 14px; border-radius: 12px; cursor: pointer; transition: 0.2s; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; user-select: none; min-width: 55px; }
         .word-block:hover { border-color: var(--accent-primary); background: var(--bg-card-hover); transform: translateY(-2px); }
-        .word-block .chinese { font-size: 1.2rem; font-weight: 600; }
+        .word-block .chinese { font-size: 1.3rem; font-weight: 600; }
 
         /* Timer Option Grid */
         .setting-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 20px; }
@@ -113,7 +113,7 @@
         .level-node { background: var(--bg-card); border: 1px solid var(--border-color); padding: 16px; border-radius: 14px; text-align: center; cursor: pointer; transition: 0.2s; }
         .level-node.completed { border-color: var(--success); background: rgba(16, 185, 129, 0.1); }
 
-        /* Dashboard Feedback Pop-up Card Overlay */
+        /* Feedback Pop-up Overlay */
         .feedback-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 15, 25, 0.88); backdrop-filter: blur(6px); border-radius: 18px; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 24px; text-align: center; z-index: 20; animation: fadeIn 0.2s ease-out; }
         .feedback-card { background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 20px; padding: 28px 20px; width: 100%; max-width: 420px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
         .feedback-card.correct { border-color: var(--success); box-shadow: 0 0 25px rgba(16, 185, 129, 0.2); }
@@ -227,7 +227,7 @@
         <div class="topic-grid">
             <div class="topic-card" onclick="startQuizMode(1)">
                 <h3>🧩 1. เรียงคำให้ถูกต้อง</h3>
-                <p>เรียงบล็อกอักษรจีนให้ตรงตามลำดับประโยคที่ถูกต้อง (พร้อมพินอินกำกับ)</p>
+                <p>เรียงบล็อกอักษรจีนให้ตรงตามลำดับประโยคที่ถูกต้อง (พร้อมพินอินตรงทุกตัวอักษร)</p>
             </div>
             <div class="topic-card" onclick="startQuizMode(2)">
                 <h3>🏷️ 2. จับคู่คำแปลภาษาไทย</h3>
@@ -275,7 +275,7 @@
             <div id="interactiveArea"></div>
             <button class="action-btn" id="submitBtn" onclick="checkAnswer()">ตรวจคำตอบ ✨</button>
 
-            <!-- Dashboard Pop-up Card (Overlay) -->
+            <!-- Feedback Overlay -->
             <div class="feedback-overlay" id="feedbackOverlay">
                 <div class="feedback-card" id="feedbackCard">
                     <div class="feedback-icon" id="feedbackIcon">🎉</div>
@@ -367,7 +367,7 @@ function updateHomeDashboard() {
     document.getElementById('currentProgressSummary').innerText = `หัวข้อปัจจุบัน: ${activeTopic.toUpperCase()} | ผ่านแล้ว: ${passedCount} / 20 ด่าน`;
 }
 
-/* 🌐 ระบบปิด/เปิดพินอินทั้งหน้าเว็บ */
+/* 🌐 ระบบเปิด/ปิดพินอินทั้งหน้าเว็บ */
 function togglePinyin() {
     const isChecked = document.getElementById('pinyinToggle').checked;
     document.body.classList.toggle('hide-pinyin', !isChecked);
@@ -491,14 +491,22 @@ function loadLevelQuestions() {
     }
 }
 
-// แตกประโยคออกเป็นบล็อกพร้อมพินอินกำกับทุกตัว
+/* 🎯 ฟังก์ชันแยกพินอินออกเป็นพยางค์ (Syllables) เพื่อจับคู่ตัวอักษรจีนแบบ 1-to-1 */
+function splitPinyinToSyllables(pyStr) {
+    if (!pyStr) return [];
+    const clean = pyStr.replace(/[.,?!。，？！'’]/g, '');
+    const pattern = /[b-df-hj-np-rs-tw-z]*[aāáǎàeēéěèiīíǐìoōóǒòuūúǔùüǖǘǚǜ]+(?:ng|n|r)?/gi;
+    return clean.match(pattern) || [];
+}
+
 function buildSentenceUnits(sentenceZh, sentencePy) {
-    const chars = sentenceZh.replace(/[.,?!。，？！]/g, '').split('');
-    const pyWords = sentencePy ? sentencePy.replace(/[.,?!。，？！]/g, '').split(' ') : [];
+    const cleanZh = sentenceZh.replace(/[.,?!。，？！]/g, '');
+    const chars = cleanZh.split('');
+    const syllables = splitPinyinToSyllables(sentencePy);
 
     return chars.map((char, idx) => ({
         chinese: char,
-        pinyin: pyWords[idx] || ''
+        pinyin: (syllables.length === chars.length) ? syllables[idx] : (syllables[idx] || '')
     }));
 }
 
@@ -522,7 +530,7 @@ function renderQuestion() {
     startTimer();
 
     if (activeQuestionMode === 1) {
-        // โหมดเรียงคำศัพท์ (มีพินอินกำกับบนบล็อกทุกตัว)
+        // โหมดเรียงคำศัพท์ (พินอินตรงตรงกับตัวอักษรจีนทุกตัว)
         qBox.innerHTML = `<span class="pinyin">${q.pinyin || ''}</span><div>${q.chinese}</div>`;
         
         const units = buildSentenceUnits(q.sentence_zh, q.sentence_py || '');
