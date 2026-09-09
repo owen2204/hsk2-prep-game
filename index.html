@@ -6,181 +6,351 @@
   <title>HSK Vocabulary Dashboard</title>
   
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      font-family: 'Tahoma', sans-serif;
-      padding: 20px;
+      font-family: 'Sukhumvit Set', 'Kanit', sans-serif;
       background-color: #f8fafc;
+      color: #0f172a;
+      padding: 20px;
     }
 
-    /* ปุ่มเปิด-ปิด พินอิน */
-    .toggle-btn {
-      padding: 10px 18px;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-      background-color: #ffffff;
-      border: 2px solid #3b82f6;
-      color: #3b82f6;
-      border-radius: 8px;
+    /* แถบเครื่องมือด้านบน */
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      background: #ffffff;
+      padding: 16px 20px;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
       margin-bottom: 20px;
-      transition: all 0.2s;
-    }
-    .toggle-btn:hover {
-      background-color: #3b82f6;
-      color: #ffffff;
     }
 
-    /* กล่องคำศัพท์ (ใช้ร่วมกันทั้งแดชบอร์ดและโซนเรียงคำ) */
+    .controls-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      background: #ffffff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      background: #f1f5f9;
+    }
+
+    .btn-toggle {
+      background: #eff6ff;
+      border-color: #3b82f6;
+      color: #1d4ed8;
+    }
+
+    .btn-hsk.active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+    }
+
+    .search-input {
+      padding: 8px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+      width: 200px;
+    }
+
+    /* 📦 กล่องคำศัพท์มาตรฐาน (ใช้ร่วมกันทั้งแดชบอร์ดและเกมเรียงประโยค) */
     .word-box {
       display: inline-flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 8px 14px;
-      margin: 4px;
-      background-color: #ffffff;
+      padding: 8px 12px;
+      background: #ffffff;
       border: 2px solid #e2e8f0;
       border-radius: 10px;
       cursor: pointer;
       user-select: none;
-      transition: transform 0.1s ease, border-color 0.2s;
+      transition: transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      min-width: 65px;
     }
+
     .word-box:hover {
       border-color: #3b82f6;
       transform: translateY(-2px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
     }
 
-    /* ตัวพินอิน */
     .word-box .pinyin {
       font-size: 0.85rem;
       color: #2563eb;
       font-weight: 500;
       height: 18px; /* ล็อกความสูงไว้ ไม่ให้กล่องขยับเวลาซ่อนพินอิน */
+      line-height: 18px;
     }
 
-    /* ตัวอักษรจีน */
     .word-box .chinese {
       font-size: 1.4rem;
       font-weight: bold;
-      color: #1e293b;
+      color: #0f172a;
     }
 
-    /* 🎯 จุดสำคัญ: เมื่อ body มีคลาส hide-pinyin จะซ่อนพินอินทุกจุดทันที */
+    /* 🎯 สวิตช์ควบคุมพินอินทั้งแอป */
     body.hide-pinyin .pinyin {
       visibility: hidden;
     }
 
-    /* ตกแต่งโซนแสดงผล */
+    /* โซนการจัดวาง */
     .section-title {
-      font-size: 1.1rem;
-      font-weight: bold;
-      margin: 15px 0 8px 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 20px 0 10px;
       color: #334155;
     }
-    .container-zone {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      padding: 12px;
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+      gap: 10px;
       background: #ffffff;
+      padding: 16px;
       border-radius: 12px;
       border: 1px solid #e2e8f0;
-      min-height: 60px;
+      min-height: 150px;
     }
+
+    .sentence-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      min-height: 70px;
+      align-items: center;
+    }
+
+    /* Modal แสดงรายละเอียดคำศัพท์ */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(2px);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 16px;
+      max-width: 400px;
+      width: 90%;
+      position: relative;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px; right: 18px;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: #94a3b8;
+    }
+
+    .modal-zh { font-size: 2.5rem; font-weight: bold; text-align: center; color: #0f172a; }
+    .modal-py { font-size: 1.1rem; color: #2563eb; text-align: center; margin-bottom: 6px; }
+    .modal-th { font-size: 1.1rem; text-align: center; color: #475569; font-weight: 600; margin-bottom: 16px; }
+    .modal-example { background: #f8fafc; padding: 12px; border-radius: 8px; font-size: 0.95rem; border-left: 4px solid #3b82f6; }
   </style>
 </head>
 <body>
 
-  <!-- ปุ่มสลับ เปิด/ปิด พินอิน -->
-  <button class="toggle-btn" id="pinyin-toggle-btn" onclick="togglePinyin()">
-    👁️ พินอิน: เปิด
-  </button>
+  <!-- แถบด้านบน: สวิตช์พินอิน ตัวกรอง HSK และช่องค้นหา -->
+  <header>
+    <div class="controls-group">
+      <button class="btn btn-toggle" id="pinyin-btn" onclick="togglePinyin()">👁️ พินอิน: เปิด</button>
+      <button class="btn btn-hsk active" onclick="filterHSK('all', this)">ทั้งหมด</button>
+      <button class="btn btn-hsk" onclick="filterHSK(1, this)">HSK 1</button>
+      <button class="btn btn-hsk" onclick="filterHSK(2, this)">HSK 2</button>
+      <button class="btn btn-hsk" onclick="filterHSK(3, this)">HSK 3</button>
+    </div>
+    <input type="text" id="search-input" class="search-input" placeholder="🔍 ค้นหาคำศัพท์..." oninput="handleSearch()">
+  </header>
 
   <!-- 1. แดชบอร์ดคำศัพท์รวม -->
-  <div class="section-title">📚 แดชบอร์ดคำศัพท์ (กดที่กล่องเพื่อดูรายละเอียด)</div>
-  <div id="vocab-dashboard" class="container-zone"></div>
+  <div class="section-title">📚 แดชบอร์ดคำศัพท์ (คลิกที่กล่องเพื่อดูรายละเอียด)</div>
+  <div id="vocab-dashboard" class="dashboard-grid"></div>
 
-  <!-- 2. กล่องคำศัพท์สำหรับเรียงประโยค -->
-  <div class="section-title">🧩 กล่องคำศัพท์สำหรับเรียงประโยค</div>
-  <div id="sentence-builder" class="container-zone"></div>
+  <!-- 2. โซนกล่องคำศัพท์เรียงประโยค -->
+  <div class="section-title">🧩 ตัวอย่างกล่องคำศัพท์สำหรับเรียงประโยค</div>
+  <div id="sentence-builder" class="sentence-container"></div>
 
-  <!-- ดึงข้อมูลคำศัพท์จาก data.js -->
+  <!-- ป๊อปอัปรายละเอียดคำศัพท์ -->
+  <div id="word-modal" class="modal" onclick="closeModal(event)">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeModalDirect()">&times;</span>
+      <div id="modal-zh" class="modal-zh"></div>
+      <div id="modal-py" class="modal-py pinyin"></div>
+      <div id="modal-th" class="modal-th"></div>
+      <div class="modal-example">
+        <strong>ประโยคตัวอย่าง:</strong>
+        <div id="modal-sent-zh" style="margin-top:4px;"></div>
+        <div id="modal-sent-py" class="pinyin" style="color:#2563eb;"></div>
+        <div id="modal-sent-th" style="color:#64748b; font-size:0.85rem;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ดึงไฟล์ข้อมูลคำศัพท์ -->
   <script src="data.js"></script>
 
   <script>
     let isPinyinShow = true;
+    let currentHSKFilter = 'all';
+    let allWords = [];
 
-    // 1. ฟังก์ชันเปิด/ปิด พินอินทั้งหน้าเว็บ
+    // เริ่มต้นโหลดข้อมูล
+    window.onload = () => {
+      // ดึงข้อมูลจาก data.js (ถ้าไม่มีจะใช้ข้อมูลสำรอง)
+      allWords = (typeof words !== 'undefined') ? words : [
+        { id: 1, hsk: 1, chinese: "爱", pinyin: "ài", thai: "รัก", sentence_zh: "我爱你。", sentence_py: "wǒ ài nǐ.", sentence_th: "ฉันรักคุณ" },
+        { id: 451, hsk: 3, chinese: "难过", pinyin: "nánguò", thai: "เสียใจ", sentence_zh: "听到这个消息我很难过。", sentence_py: "tīngdào zhè gè xiāoxi wǒ hěn nánguò.", sentence_th: "ได้ยินข่าวนี้แล้วฉันเสียใจมาก" },
+        { id: 455, hsk: 3, chinese: "努力", pinyin: "nǔlì", thai: "ขยัน", sentence_zh: "努力学习。", sentence_py: "nǔlì xuéxí.", sentence_th: "ขยันเรียนหนังสือ" }
+      ];
+
+      renderDashboard(allWords);
+      renderSentenceGame();
+    };
+
+    // 1. ฟังก์ชันสลับ เปิด/ปิด พินอินทั่วทั้งหน้าเว็บ
     function togglePinyin() {
       isPinyinShow = !isPinyinShow;
-      
-      // สลับคลาส hide-pinyin ที่ body
       document.body.classList.toggle('hide-pinyin', !isPinyinShow);
       
-      // เปลี่ยนข้อความบนปุ่ม
-      const btn = document.getElementById('pinyin-toggle-btn');
+      const btn = document.getElementById('pinyin-btn');
       btn.innerText = isPinyinShow ? '👁️ พินอิน: เปิด' : '🙈 พินอิน: ปิด';
     }
 
-    // 2. ฟังก์ชันสร้าง Element กล่องคำศัพท์ (มีพินอินติดไปทุกกล่อง)
+    // 2. ฟังก์ชันสร้าง Element กล่องคำศัพท์มาตรฐาน
     function createWordBox(wordObj, onClickHandler) {
       const box = document.createElement('div');
       box.className = 'word-box';
-      
       box.innerHTML = `
         <span class="pinyin">${wordObj.pinyin || ''}</span>
         <span class="chinese">${wordObj.chinese}</span>
       `;
-
-      if (onClickHandler) {
-        box.onclick = () => onClickHandler(wordObj);
-      }
-
+      if (onClickHandler) box.onclick = () => onClickHandler(wordObj);
       return box;
     }
 
-    // 3. แสดงผลในแดชบอร์ดคำศัพท์
-    function renderDashboard() {
+    // 3. แสดงผลคำศัพท์บนแดชบอร์ด
+    function renderDashboard(list) {
       const container = document.getElementById('vocab-dashboard');
       container.innerHTML = '';
 
-      // ดึงข้อมูลจากไฟล์ data.js (ถ้าไม่มีจะใช้ข้อมูลจำลอง)
-      const list = (typeof words !== 'undefined') ? words : [
-        { id: 451, chinese: "难过", pinyin: "nánguò", thai: "เสียใจ", sentence_zh: "听到这个消息我很难过。" },
-        { id: 455, chinese: "努力", pinyin: "nǔlì", thai: "ขยัน", sentence_zh: "努力学习。" }
-      ];
+      if (list.length === 0) {
+        container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #94a3b8;">ไม่พบคำศัพท์</div>';
+        return;
+      }
 
       list.forEach(item => {
-        const card = createWordBox(item, (selected) => {
-          // เมื่อกดที่กล่องในแดชบอร์ด จะแสดงรายละเอียด
-          alert(`คำศัพท์: ${selected.chinese}\nพินอิน: ${selected.pinyin}\nคำแปล: ${selected.thai}\nประโยคตัวอย่าง: ${selected.sentence_zh}`);
-        });
-        container.appendChild(card);
+        const box = createWordBox(item, openModal);
+        container.appendChild(box);
       });
     }
 
-    // 4. แสดงผลในโซนกล่องเรียงประโยค
+    // 4. แสดงผลโซนเรียงประโยค
     function renderSentenceGame() {
       const container = document.getElementById('sentence-builder');
       container.innerHTML = '';
 
-      const gameWords = [
+      const sampleSentence = [
         { chinese: "我", pinyin: "wǒ" },
-        { chinese: "很", pinyin: "hěn" },
-        { chinese: "难过", pinyin: "nánguò" }
+        { chinese: "听了", pinyin: "tīng le" },
+        { chinese: "感到", pinyin: "gǎndào" },
+        { chinese: "很难过", pinyin: "hěn nánguò" }
       ];
 
-      gameWords.forEach(item => {
-        const tile = createWordBox(item, (selected) => {
-          console.log("เลือกคำว่า:", selected.chinese);
+      sampleSentence.forEach(item => {
+        const box = createWordBox(item, (selected) => {
+          console.log("เลือกคำเรียงประโยค:", selected.chinese);
         });
-        container.appendChild(tile);
+        container.appendChild(box);
       });
     }
 
-    // เรียกให้ทำงานทันทีเมื่อเปิดหน้าเว็บ
-    renderDashboard();
-    renderSentenceGame();
+    // 5. ระบบกรองระดับ HSK
+    function filterHSK(level, btnElement) {
+      currentHSKFilter = level;
+      document.querySelectorAll('.btn-hsk').forEach(b => b.classList.remove('active'));
+      btnElement.classList.add('active');
+      applyFilters();
+    }
+
+    // 6. ระบบค้นหาคำศัพท์
+    function handleSearch() {
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const query = document.getElementById('search-input').value.toLowerCase().trim();
+      
+      const filtered = allWords.filter(item => {
+        const matchHSK = (currentHSKFilter === 'all') || (item.hsk === currentHSKFilter);
+        const matchQuery = !query || 
+          item.chinese.includes(query) || 
+          (item.pinyin && item.pinyin.toLowerCase().includes(query)) || 
+          (item.thai && item.thai.includes(query));
+
+        return matchHSK && matchQuery;
+      });
+
+      renderDashboard(filtered);
+    }
+
+    // 7. ระบบ ป๊อปอัป (Modal) แสดงรายละเอียด
+    function openModal(item) {
+      document.getElementById('modal-zh').innerText = item.chinese;
+      document.getElementById('modal-py').innerText = item.pinyin || '';
+      document.getElementById('modal-th').innerText = item.thai || '';
+      
+      document.getElementById('modal-sent-zh').innerText = item.sentence_zh || '-';
+      document.getElementById('modal-sent-py').innerText = item.sentence_py || '';
+      document.getElementById('modal-sent-th').innerText = item.sentence_th || '';
+
+      document.getElementById('word-modal').style.display = 'flex';
+    }
+
+    function closeModal(event) {
+      if (event.target.id === 'word-modal') {
+        document.getElementById('word-modal').style.display = 'none';
+      }
+    }
+
+    function closeModalDirect() {
+      document.getElementById('word-modal').style.display = 'none';
+    }
   </script>
 
 </body>
