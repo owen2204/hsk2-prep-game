@@ -74,7 +74,7 @@
 
         /* Quiz Area UI */
         .dashboard-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
-        .quiz-area { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 18px; padding: 24px; min-height: 360px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+        .quiz-area { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 18px; padding: 24px; min-height: 380px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
         .question-box { text-align: center; margin: 15px 0; min-height: 80px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 1.6rem; font-weight: 600; }
         .pinyin { font-size: 1rem; color: #a5b4fc; margin-bottom: 4px; font-weight: 400; }
         .hide-pinyin .pinyin { display: none !important; }
@@ -107,7 +107,7 @@
         .level-node .status { font-size: 0.75rem; color: var(--text-sub); margin-top: 4px; }
 
         /* Custom In-Page Dashboard Feedback Pop-up Card */
-        .feedback-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 15, 25, 0.85); backdrop-filter: blur(6px); border-radius: 18px; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 24px; text-align: center; z-index: 20; animation: fadeIn 0.2s ease-out; }
+        .feedback-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 15, 25, 0.88); backdrop-filter: blur(6px); border-radius: 18px; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 24px; text-align: center; z-index: 20; animation: fadeIn 0.2s ease-out; }
         .feedback-card { background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 20px; padding: 28px 20px; width: 100%; max-width: 420px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
         .feedback-card.correct { border-color: var(--success); box-shadow: 0 0 25px rgba(16, 185, 129, 0.2); }
         .feedback-card.wrong { border-color: var(--danger); box-shadow: 0 0 25px rgba(239, 68, 68, 0.2); }
@@ -157,16 +157,16 @@
                     <h3>🟢 HSK 1</h3>
                     <span style="font-size: 1.4rem;">🌱</span>
                 </div>
-                <p>ระดับเริ่มต้น คำศัพท์พื้นฐาน 150 คำ ประโยคสนทนาสั้นในชีวิตประจำวัน</p>
-                <span class="badge">คำศัพท์ลำดับที่ 1 - 150</span>
+                <p>ระดับเริ่มต้น คำศัพท์พื้นฐาน ประโยคสนทนาสั้นในชีวิตประจำวัน</p>
+                <span class="badge">คำศัพท์หมวดพื้นฐาน</span>
             </div>
             <div class="topic-card" onclick="selectTopic('hsk2')">
                 <div class="card-head">
                     <h3>🔵 HSK 2</h3>
                     <span style="font-size: 1.4rem;">🚀</span>
                 </div>
-                <p>ระดับกลาง สื่อสารประโยคความซ้อนและคำศัพท์ต่อยอดอีก 150 คำ</p>
-                <span class="badge">คำศัพท์ลำดับที่ 151 - 300</span>
+                <p>ระดับกลาง สื่อสารประโยคความซ้อน และบริบทชีวิตประจำวัน</p>
+                <span class="badge">คำศัพท์ประโยคต่อยอด</span>
             </div>
             <div class="topic-card" onclick="selectTopic('hsk3')">
                 <div class="card-head">
@@ -174,7 +174,7 @@
                     <span style="font-size: 1.4rem;">💎</span>
                 </div>
                 <p>ระดับสูง เข้าใจบริบทการทำงาน การแก้ไขปัญหา และการเล่าเรื่อง</p>
-                <span class="badge">คำศัพท์ลำดับที่ 301 - 600</span>
+                <span class="badge">คำศัพท์การทำงานและการสื่อสาร</span>
             </div>
             <div class="topic-card" onclick="selectTopic('mix')">
                 <div class="card-head">
@@ -182,7 +182,7 @@
                     <span style="font-size: 1.4rem;">⚡</span>
                 </div>
                 <p>ทดสอบคละคำศัพท์และประโยคจาก HSK 1 ถึง HSK 3 ครบทุกรูปแบบ</p>
-                <span class="badge">คลังศัพท์สมบูรณ์ 600 คำ</span>
+                <span class="badge">คลังศัพท์สมบูรณ์</span>
             </div>
         </div>
     </div>
@@ -282,18 +282,43 @@
 </div>
 
 <script>
-// คลังข้อมูลคำศัพท์ HSK 1-3
+// คลังข้อมูลคำศัพท์ HSK 1-3 ขยายความหลากหลาย (30+ รายการ)
 const hskDatabase = [
+    // --- HSK 1 ---
     { id: 1, hsk: 1, chinese: "爱", pinyin: "ài", thai: "รัก", sentence_zh: "我爱吃米饭。", sentence_py: "wǒ ài chī mǐfàn.", sentence_th: "ฉันรักการกินข้าวสวย", missing: "รัก" },
-    { id: 2, hsk: 1, chinese: "吃", pinyin: "chī", thai: "กิน", sentence_zh: "你不吃吗？", sentence_py: "nǐ bù chī ma?", sentence_th: "คุณไม่กินเหรอ", missing: "กิน" },
-    { id: 3, hsk: 1, chinese: "米饭", pinyin: "mǐfàn", thai: "ข้าวสวย", sentence_zh: "我不喜欢吃米饭。", sentence_py: "wǒ bù xǐhuān chī mǐfàn.", sentence_th: "ฉันไม่ชอบกินข้าวสวย", missing: "ข้าวสวย" },
-    { id: 4, hsk: 1, chinese: "苹果", pinyin: "píngguǒ", thai: "แอปเปิ้ล", sentence_zh: "我想买苹果。", sentence_py: "wǒ xiǎng mǎi píngguǒ.", sentence_th: "ฉันอยากซื้อแอปเปิ้ล", missing: "แอปเปิ้ล" },
-    { id: 5, hsk: 1, chinese: "喝", pinyin: "hē", thai: "ดื่ม", sentence_zh: "你想喝什么？", sentence_py: "nǐ xiǎng hē shénme?", sentence_th: "คุณอยากดื่มอะไร", missing: "ดื่ม" },
-    { id: 6, hsk: 2, chinese: "帮助", pinyin: "bāngzhù", thai: "ช่วยเหลือ", sentence_zh: "谢谢你的帮助。", sentence_py: "xièxie nǐ de bāngzhù.", sentence_th: "ขอบคุณสำหรับการช่วยเหลือของคุณ", missing: "ช่วยเหลือ" },
-    { id: 7, hsk: 2, chinese: "准备", pinyin: "zhǔnbèi", thai: "เตรียมตัว", sentence_zh: "我在为考试做准备。", sentence_py: "wǒ zài wèi kǎoshì zuò zhǔnbèi.", sentence_th: "ฉันกำลังเตรียมตัวเพื่อการสอบ", missing: "เตรียมตัว" },
-    { id: 8, hsk: 2, chinese: "身体", pinyin: "shēntǐ", thai: "ร่างกาย", sentence_zh: "祝你身体健康。", sentence_py: "zhù nǐ shēntǐ jiànkāng.", sentence_th: "ขอให้ร่างกายของคุณแข็งแรง", missing: "ร่างกาย" },
-    { id: 9, hsk: 3, chinese: "照顾", pinyin: "zhàogù", thai: "ดูแล", sentence_zh: "我会照顾好自己。", sentence_py: "wǒ huì zhàogù hǎo zìjǐ.", sentence_th: "ฉันจะดูแลตัวเองให้ดี", missing: "ดูแล" },
-    { id: 10, hsk: 3, chinese: "解决", pinyin: "jiějué", thai: "แก้ไข", sentence_zh: "这个问题怎么解决？", sentence_py: "zhège wèntí zěnme jiějué?", sentence_th: "ปัญหานี้จะแก้ไขอย่างไร", missing: "แก้ไข" }
+    { id: 2, hsk: 1, chinese: "苹果", pinyin: "píngguǒ", thai: "แอปเปิ้ล", sentence_zh: "我想买苹果。", sentence_py: "wǒ xiǎng mǎi píngguǒ.", sentence_th: "ฉันอยากซื้อแอปเปิ้ล", missing: "แอปเปิ้ล" },
+    { id: 3, hsk: 1, chinese: "医生", pinyin: "yīshēng", thai: "หมอ", sentence_zh: "他是好医生。", sentence_py: "tā shì hǎo yīshēng.", sentence_th: "เขาเป็นหมอที่ดี", missing: "หมอ" },
+    { id: 4, hsk: 1, chinese: "认识", pinyin: "rènshi", thai: "รู้จัก", sentence_zh: "很高兴认识你。", sentence_py: "hěn gāoxìng rènshi nǐ.", sentence_th: "ยินดีที่ได้รู้จักคุณ", missing: "รู้จัก" },
+    { id: 5, hsk: 1, chinese: "天气", pinyin: "tiānqì", thai: "อากาศ", sentence_zh: "今天天气很好。", sentence_py: "jīntiān tiānqì hěn hǎo.", sentence_th: "วันนี้อากาศดีมาก", missing: "อากาศ" },
+    { id: 6, hsk: 1, chinese: "睡觉", pinyin: "shuìjiào", thai: "นอนหลับ", sentence_zh: "我想去睡觉。", sentence_py: "wǒ xiǎng qù shuìjiào.", sentence_th: "ฉันอยากไปนอนหลับ", missing: "นอนหลับ" },
+    { id: 7, hsk: 1, chinese: "学习", pinyin: "xuéxí", thai: "เรียนรู้", sentence_zh: "我们学习汉语。", sentence_py: "wǒmen xuéxí hànyǔ.", sentence_th: "พวกเราเรียนรู้ภาษาจีน", missing: "เรียนรู้" },
+    { id: 8, hsk: 1, chinese: "漂亮", pinyin: "piàoliang", thai: "สวย", sentence_zh: "这衣服很漂亮。", sentence_py: "zhè yīfu hěn piàoliang.", sentence_th: "เสื้อตัวนี้สวยมาก", missing: "สวย" },
+    { id: 9, hsk: 1, chinese: "电话", pinyin: "diànhuà", thai: "โทรศัพท์", sentence_zh: "请打电话给我。", sentence_py: "qǐng dǎ diànhuà gěi wǒ.", sentence_th: "โปรดโทรศัพท์หาฉัน", missing: "โทรศัพท์" },
+    { id: 10, hsk: 1, chinese: "商店", pinyin: "shāngdiàn", thai: "ร้านค้า", sentence_zh: "我去商店买东西。", sentence_py: "wǒ qù shāngdiàn mǎi dōngxi.", sentence_th: "ฉันไปร้านค้าเพื่อซื้อของ", missing: "ร้านค้า" },
+
+    // --- HSK 2 ---
+    { id: 11, hsk: 2, chinese: "帮助", pinyin: "bāngzhù", thai: "ช่วยเหลือ", sentence_zh: "谢谢你的帮助。", sentence_py: "xièxie nǐ de bāngzhù.", sentence_th: "ขอบคุณสำหรับการช่วยเหลือของคุณ", missing: "ช่วยเหลือ" },
+    { id: 12, hsk: 2, chinese: "准备", pinyin: "zhǔnbèi", thai: "เตรียมตัว", sentence_zh: "我在准备考试。", sentence_py: "wǒ zài zhǔnbèi kǎoshì.", sentence_th: "ฉันกำลังเตรียมตัวสอบ", missing: "เตรียมตัว" },
+    { id: 13, hsk: 2, chinese: "运动", pinyin: "yùndòng", thai: "ออกกำลังกาย", sentence_zh: "每天都要运动。", sentence_py: "měitiān dōu yào yùndòng.", sentence_th: "ทุกวันต้องออกกำลังกาย", missing: "ออกกำลังกาย" },
+    { id: 14, hsk: 2, chinese: "旅游", pinyin: "lǚyóu", thai: "ท่องเที่ยว", sentence_zh: "我喜欢去北京旅游。", sentence_py: "wǒ xǐhuān qù běijīng lǚyóu.", sentence_th: "ฉันชอบไปท่องเที่ยวปักกิ่ง", missing: "ท่องเที่ยว" },
+    { id: 15, hsk: 2, chinese: "简单", pinyin: "jiǎndān", thai: "ง่าย", sentence_zh: "这个问题很简单。", sentence_py: "zhège wèntí hěn jiǎndān.", sentence_th: "คำถามนี้ง่ายมาก", missing: "ง่าย" },
+    { id: 16, hsk: 2, chinese: "跑步", pinyin: "pǎobù", thai: "วิ่ง", sentence_zh: "早上我去跑步。", sentence_py: "zǎoshang wǒ qù pǎobù.", sentence_th: "ตอนเช้าฉันไปวิ่ง", missing: "วิ่ง" },
+    { id: 17, hsk: 2, chinese: "介绍", pinyin: "jièshào", thai: "แนะนำ", sentence_zh: "请介绍一下自己。", sentence_py: "qǐng jièshào yíxià zìjǐ.", sentence_th: "โปรดแนะนำตัวเองหน่อย", missing: "แนะนำ" },
+    { id: 18, hsk: 2, chinese: "身体", pinyin: "shēntǐ", thai: "ร่างกาย", sentence_zh: "祝你身体健康。", sentence_py: "zhù nǐ shēntǐ jiànkāng.", sentence_th: "ขอให้ร่างกายของคุณแข็งแรง", missing: "ร่างกาย" },
+    { id: 19, hsk: 2, chinese: "游泳", pinyin: "yóuyǒng", thai: "ว่ายน้ำ", sentence_zh: "夏天适合游泳。", sentence_py: "xiàtiān shìhé yóuyǒng.", sentence_th: "ฤดูร้อนเหมาะกับการว่ายน้ำ", missing: "ว่ายน้ำ" },
+    { id: 20, hsk: 2, chinese: "事情", pinyin: "shìqing", thai: "ธุระ", sentence_zh: "今天有很多事情。", sentence_py: "jīntiān yǒu hěn duō shìqing.", sentence_th: "วันนี้มีธุระเยอะมาก", missing: "ธุระ" },
+
+    // --- HSK 3 ---
+    { id: 21, hsk: 3, chinese: "照顾", pinyin: "zhàogù", thai: "ดูแล", sentence_zh: "我会照顾自己。", sentence_py: "wǒ huì zhàogù zìjǐ.", sentence_th: "ฉันจะดูแลตัวเอง", missing: "ดูแล" },
+    { id: 22, hsk: 3, chinese: "解决", pinyin: "jiějué", thai: "แก้ไข", sentence_zh: "我们要解决问题。", sentence_py: "wǒmen yào jiějué wèntí.", sentence_th: "พวกเราต้องแก้ไขปัญหา", missing: "แก้ไข" },
+    { id: 23, hsk: 3, chinese: "方便", pinyin: "fāngbiàn", thai: "สะดวก", sentence_zh: "坐地铁很方便。", sentence_py: "zuò dìtiě hěn fāngbiàn.", sentence_th: "นั่งรถไฟใต้ดินสะดวกมาก", missing: "สะดวก" },
+    { id: 24, hsk: 3, chinese: "影响", pinyin: "yǐngxiǎng", thai: "ผลกระทบ", sentence_zh: "这不会影响工作。", sentence_py: "zhè bú huì yǐngxiǎng gōngzuò.", sentence_th: "สิ่งนี้ไม่สร้างผลกระทบต่อการทำงาน", missing: "ผลกระทบ" },
+    { id: 25, hsk: 3, chinese: "环境", pinyin: "huánjìng", thai: "สิ่งแวดล้อม", sentence_zh: "这里的环境非常好。", sentence_py: "zhèlǐ de huánjìng hěn hǎo.", sentence_th: "สิ่งแวดล้อมที่นี่ดีมาก", missing: "สิ่งแวดล้อม" },
+    { id: 26, hsk: 3, chinese: "努力", pinyin: "nǔlì", thai: "ขยัน", sentence_zh: "他学习非常努力。", sentence_py: "tā xuéxí fēicháng nǔlì.", sentence_th: "เขาเรียนขยันมาก", missing: "ขยัน" },
+    { id: 27, hsk: 3, chinese: "满意", pinyin: "mǎnyì", thai: "พอใจ", sentence_zh: "大家都很满意。", sentence_py: "dàjiā dōu hěn mǎnyì.", sentence_th: "ทุกคนพอใจมาก", missing: "พอใจ" },
+    { id: 28, hsk: 3, chinese: "关系", pinyin: "guānxi", thai: "ความสัมพันธ์", sentence_zh: "我们关系很好。", sentence_py: "wǒmen guānxi hěn hǎo.", sentence_th: "ความสัมพันธ์พวกเราดีมาก", missing: "ความสัมพันธ์" },
+    { id: 29, hsk: 3, chinese: "清楚", pinyin: "qīngchu", thai: "ชัดเจน", sentence_zh: "我听得很清楚。", sentence_py: "wǒ tīng de hěn qīngchu.", sentence_th: "ฉันฟังได้ชัดเจนมาก", missing: "ชัดเจน" },
+    { id: 30, hsk: 3, chinese: "机会", pinyin: "jīhuì", thai: "โอกาส", sentence_zh: "这是一次好机会。", sentence_py: "zhè shì yí cì hǎo jīhuì.", sentence_th: "นี่คือโอกาสที่ดีครั้งหนึ่ง", missing: "โอกาส" }
 ];
 
 let activeTopic = 'hsk1';
@@ -374,6 +399,7 @@ function loadLevelQuestions() {
     
     if(filtered.length === 0) filtered = hskDatabase;
     
+    // สุ่มคำถามจากคลังอย่างเป็นอิสระ
     levelQuestions = [...filtered].sort(() => 0.5 - Math.random()).slice(0, 10);
     while(levelQuestions.length < 10) {
         levelQuestions.push(filtered[Math.floor(Math.random() * filtered.length)]);
@@ -534,7 +560,7 @@ function checkAnswer(timeout = false) {
         }
     }
 
-    // แสดงการแจ้งเตือนบนการ์ดในแดชบอร์ด (แทน alert)
+    // แสดงการแจ้งเตือนบนการ์ดในแดชบอร์ด
     const card = document.getElementById('feedbackCard');
     const icon = document.getElementById('feedbackIcon');
     const title = document.getElementById('feedbackTitle');
