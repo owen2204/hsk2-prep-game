@@ -604,10 +604,10 @@ const hskDatabase = [
     { id: 597, hsk: 3, chinese: "了解", pinyin: "liǎojiě", thai: "ทำความเข้าใจ", sentence_zh: "深入了解。", sentence_py: "shēnrù liǎojiě.", sentence_th: "ทำความเข้าใจอย่างลึกซึ้ง", missing: "ทำความเข้าใจ" },
     { id: 598, hsk: 3, chinese: "马上", pinyin: "mǎshàng", thai: "เดี๋ยวนี้/ทันที", sentence_zh: "马上出发。", sentence_py: "mǎshàng chūfā.", sentence_th: "ออกเดินทางทันทีเดี๋ยวนี้", missing: "ทันที" },
     { id: 599, hsk: 3, chinese: "明白", pinyin: "míngbai", thai: "กระจ่างแจ้ง", sentence_zh: "非常明白。", sentence_py: "fēicháng míngbai.", sentence_th: "กระจ่างแจ้งอย่างมาก", missing: "กระจ่างแจ้ง" },
-    { id: 600, hsk: 3, chinese: "结束", pinyin: "jiéshù", thai: "เสร็จสิ้นลง", sentence_zh: "课程结束了。", sentence_py: "kèchéng jiéshù le.", sentence_th: "หลักสูตรเสร็จสิ้นลงแล้ว", missing: "เสร็จสิ้นลง" }
+    { id: 600, hsk: 3, chinese: "结束", pinyin: "jiéshù", thai: "เสร็จสิ้นลง", sentence_zh: "课程结束了。", sentence_py: "kèchéng jiéshù le.", sentence_th: "หลักสูตรเสร็จสิ้นลงแล้ว", missing: "เสร็จสิ้นลง" },
 
     //เสริม
-    //{ id: 601, hsk 2, chinese: "领带", pinyin: "lǐngdài", thai: "เนคไท", sentence_zh: "红色的领带。", sentence_py: "hóngsè de lǐngdài.", sentence_th: "เนคไทสีแดง", missing: "เนคไท" }
+    { id: 601, hsk 2, chinese: "领带", pinyin: "lǐngdài", thai: "เนคไท", sentence_zh: "红色的领带。", sentence_py: "hóngsè de lǐngdài.", sentence_th: "เนคไทสีแดง", missing: "เนคไท" }
     
 
 ];
