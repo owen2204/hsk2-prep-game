@@ -607,7 +607,7 @@ const hskDatabase = [
     { id: 600, hsk: 3, chinese: "结束", pinyin: "jiéshù", thai: "เสร็จสิ้นลง", sentence_zh: "课程结束了。", sentence_py: "kèchéng jiéshù le.", sentence_th: "หลักสูตรเสร็จสิ้นลงแล้ว", missing: "เสร็จสิ้นลง" },
 
     //เสริม
-    { id: 601, hsk 2, chinese: "领带", pinyin: "lǐngdài", thai: "เนคไท", sentence_zh: "红色的领带。", sentence_py: "hóngsè de lǐngdài.", sentence_th: "เนคไทสีแดง", missing: "เนคไท" }
+    //{ id: 601, hsk 2, chinese: "领带", pinyin: "lǐngdài", thai: "เนคไท", sentence_zh: "红色的领带。", sentence_py: "hóngsè de lǐngdài.", sentence_th: "เนคไทสีแดง", missing: "เนคไท" }
     
 
 ];
